@@ -12,7 +12,7 @@ exports.auth = async (req, res, next) => {
                         || req.header("Authorization").replace("Bearer ", "");
 
 
-        console.log("middle token is",token)
+        
         //if token missing, then return response
         if(!token) {
             return res.status(401).json({
@@ -20,11 +20,11 @@ exports.auth = async (req, res, next) => {
                 message:'Token is missing',
             });
         }
-
+        console.log("middle token is",token)
         //verify the token
         try{
             const decode =  jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
+            console.log("decode is ",decode);
             req.user = decode;
         }
         catch(err) {

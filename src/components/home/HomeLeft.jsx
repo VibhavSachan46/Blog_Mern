@@ -38,7 +38,7 @@ const HomeLeft = () => {
     }, []);
 
     return (
-        <div className='w-[70%] flex flex-col'>
+        <div className='flex flex-col'>
 
             {
                 loading ? (

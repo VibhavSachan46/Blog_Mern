@@ -155,6 +155,26 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
+exports.getRandomPosts = async (req, res) => {
+    try {
+        // Find random posts in the database
+        const posts = await Post.find().limit(5).populate({
+            path: 'Author',
+            model: 'User', // Assuming your User model is named 'User'
+            select: 'firstName lastName image', // Select the fields you want to populate
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Random posts fetched successfully',
+            posts
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch random posts' });
+    }
+};
+
 
 exports.getPost = async (req, res) => {
     try {
@@ -165,7 +185,7 @@ exports.getPost = async (req, res) => {
             .populate({
                 path: 'Author',
                 model: 'User', // Assuming your User model is named 'User'
-                select: 'firstName lastName image', // Select the fields you want to populate
+                select: 'firstName lastName image email', // Select the fields you want to populate
             })
             .populate({
                 path: 'Tag',
@@ -195,6 +215,65 @@ exports.getPost = async (req, res) => {
 };
 
 
-exports.savedPost = async(req,res) =>{
-    
-}
+
+
+exports.updatePost = async (request, response) => {
+    try {
+        const post = await Post.findById(request.params.id);
+
+        if (!post) {
+            return response.status(404).json({ msg: 'Post not found' });
+        }
+
+        // Update post fields
+        post.title = request.body.title;
+        post.summary = request.body.summary;
+        post.content = request.body.content;
+        post.thumbnail = request.body.thumbnail;
+
+        // Update tag if provided
+        if (request.body.tag) {
+            post.Tag = request.body.tag;
+        }
+
+        await post.save();
+
+        return response.status(200).json({
+            success: true,
+            data: post,
+            message: "Post updated successfully",
+        });
+
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({
+            success: false,
+            message: "Failed to update Post",
+            error: error.message,
+        });
+    }
+};
+
+exports.deletePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        // Delete post
+        await Post.findByIdAndDelete(postId);
+
+        // Delete post from User model
+        await User.updateMany({}, { $pull: { Posts: postId, savedPosts: postId } });
+
+        // Delete post from Tag model
+        await Tag.updateMany({}, { $pull: { Posts: postId } });
+
+        // Delete comments associated with the post
+        // await Comment.deleteMany({ PostId: postId });
+
+        res.status(200).json({ success: true, message: "Post and its references deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Failed to delete post", error: error.message });
+    }
+};
+

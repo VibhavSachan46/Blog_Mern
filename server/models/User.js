@@ -28,12 +28,12 @@ const User = new mongoose.Schema(
             type: String,
         },
         token: {
-			type: String, 
-		},
+            type: String,
+        },
         Posts: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref:"Post"
+                ref: "Post"
             }
         ],
         savedPosts: [
@@ -42,8 +42,6 @@ const User = new mongoose.Schema(
                 ref: "Post",
             },
         ],
-
-
     }
 )
 

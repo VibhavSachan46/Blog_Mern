@@ -79,30 +79,26 @@ const Header = () => {
                                                     {link.title}
                                                     <IoIosArrowDropdown />
                                                     <div
-                                                        className={`absolute gap-x-8 gap-y-8 text-xl left-[50%] transform -translate-x-1/2 top-12 flex flex-col rounded-3xl bg-richblack-50 p-4 text-richblack-900 ${isDropdownVisible ? 'visible opacity-100' : 'invisible opacity-50'} transition-all duration-200 lg:w-[300px]`}
+                                                        className={` absolute gap-x-8 gap-y-8 text-xl left-[50%] transform -translate-x-1/2 top-12 flex flex-col rounded-3xl bg-richblack-50 p-4 text-richblack-900 ${isDropdownVisible ? 'visible opacity-100 z-100' : 'invisible opacity-50'} transition-all duration-200 lg:w-[300px]`}
                                                         onMouseEnter={() => setIsDropdownVisible(true)}
                                                         onMouseLeave={() => setIsDropdownVisible(false)}
+                                                        style={{ zIndex: 100 }} // Set a high z-index value
                                                     >
+                                                        <div className='absolute left-[45%] top-0 translate-x-[80%] translate-y-[-45%] h-6 w-6 rotate-45 rounded bg-richblack-50'></div>
 
-                                                        <div className='absolute left-[45%] top-0
-                                translate-x-[80%]
-                                translate-y-[-45%] h-6 w-6 rotate-45 rounded bg-richblack-50'>
-                                                        </div>
-
-                                                        {
-                                                            tags.length ? (
-                                                                tags.map((tags, index) => (
-                                                                    <Link to={`/tags/${tags._id}`} key={index}>
-                                                                        <div className='gap-16'>
-                                                                            <p >{tags.name}</p>
-                                                                        </div>
-
-                                                                    </Link>
-                                                                ))
-                                                            ) : (<div>Noth</div>)
-                                                        }
-
+                                                        {tags.length ? (
+                                                            tags.map((tags, index) => (
+                                                                <Link to={`/tags/${tags._id}`} key={index}>
+                                                                    <div className='gap-16'>
+                                                                        <p>{tags.name}</p>
+                                                                    </div>
+                                                                </Link>
+                                                            ))
+                                                        ) : (
+                                                            <div>Noth</div>
+                                                        )}
                                                     </div>
+
                                                 </div>
                                             ) : (
                                                 <Link to={link?.path}>

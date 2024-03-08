@@ -5,6 +5,8 @@ import { apiConnector } from '../../services/apiconnector';
 import { TagEndpoints } from '../../services/apis';
 import { fetchTagsFailure, fetchTagsRequest, fetchTagsSuccess, } from '../../slices/Tag';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const HomeRight = () => {
   // const [tags, setTags] = useState([]);
@@ -13,10 +15,12 @@ const HomeRight = () => {
   const dispatch = useDispatch();
   const tags = useSelector((state) => state.tags.tags);
   // const { user } = useSelector((state) => state.profile);
-  
+
   // const tags = "heleloeo"
   const { loading } = useSelector((state) => state.tags);
   // const loading = false
+
+  const [randomPosts, setRandomPosts] = useState([])
 
 
 
@@ -32,13 +36,32 @@ const HomeRight = () => {
       }
     };
 
+    const fetchRandomPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/v1/post/getRandomPosts");
+        console.log("responsesssss is", response)
+        console.log("response.data.success", response.data.success)
+        console.log("response.data.data", response.data.posts)
+        if (response.data.success === true) {
+          setRandomPosts(response.data.posts);
+        }else{
+          toast.error("Could not fetch recommended posts")
+        }
+      } catch (error) {
+        console.log("Could not fetch random posts");
+      }
+    };
+
+
     fetchTags();
+    fetchRandomPosts()
   }, [dispatch]);
 
   console.log("Tags are ", tags.map(tag => tag.name).join(", "));
+  console.log("random posts are", randomPosts);
 
   return (
-    <div className="w-[30%] overflow-y-auto">
+    <div className="">
       {/* Recommended posts */}
       <div className="flex flex-col justify-start items-start gap-6 mt-16">
         <h2 className="text-2xl">
@@ -65,12 +88,12 @@ const HomeRight = () => {
 
         </h2>
         <div className="flex flex-col gap-8 mt-8">
-          <TrendingPost />
-          <TrendingPost />
-          <TrendingPost />
-          <TrendingPost />
-          <TrendingPost />
-          <TrendingPost />
+          {/* <TrendingPost post={randomPosts}/> */}
+          {
+            randomPosts.map((post) => (
+              <TrendingPost key={post._id} post={post}/>
+            ))
+          }
         </div>
       </div>
     </div>

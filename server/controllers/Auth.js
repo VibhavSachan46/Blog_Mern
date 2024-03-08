@@ -90,10 +90,12 @@ exports.login = async (req, res) => {
                 message: `Please Fill up All the Required Fields`,
             });
         }
-        
+
 
         // Find user with provided email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email })
+            .populate('Posts')
+            .populate('savedPosts');
 
         // Generate JWT token and Compare Password
         if (await bcrypt.compare(password, user.password)) {
@@ -108,7 +110,7 @@ exports.login = async (req, res) => {
             // Save token to user document in database
             user.token = token;
             user.password = undefined; //to protect password from any attack. It willbe removed only from user object and not from database
-            
+
             // Set cookie for token and return success response
             const options = {
                 expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -141,20 +143,14 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
     try {
         // Check if the request contains a valid JWT token
-        const token = req.cookies.token;
-
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: No token provided",
-            });
-        }
-
-        // Verify the token
-        const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Get profile started")
+        const userId = req.user.id;
+        console.log("userid is",userId)
 
         // Use the decoded data to find the user in the database
-        const user = await User.findById(decodedData.id);
+        const user = await User.findById(userId)
+            .populate('Posts')
+            .populate('savedPosts');
 
         if (!user) {
             return res.status(404).json({
@@ -165,6 +161,8 @@ exports.getProfile = async (req, res) => {
 
         // Remove sensitive information from the user object
         user.password = undefined;
+
+        console.log("Get profile complerted")
 
         return res.status(200).json({
             success: true,
@@ -191,3 +189,46 @@ exports.logout = async (req, res) => {
         });
     }
 }
+
+exports.savePost = async (req, res) => {
+    const postId = req.params.id;
+    const userId = req.user.id;
+    console.log("POSt id is", postId)
+
+    try {
+        const user = await User.findById(userId);
+
+        // Check if the post is already saved
+        if (!user.savedPosts.includes(postId)) {
+            user.savedPosts.push(postId);
+            await user.save();
+        }
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error saving post:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to save post' });
+    }
+};
+
+exports.unsavePost = async (req, res) => {
+    const postId = req.params.id;
+    const userId = req.user.id;
+    console.log("unsave POSt id is", postId)
+
+    try {
+        const user = await User.findById(userId);
+
+        // Check if the post is saved
+        const index = user.savedPosts.indexOf(postId);
+        if (index !== -1) {
+            user.savedPosts.splice(index, 1);
+            await user.save();
+        }
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error unsaving post:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to unsave post' });
+    }
+};

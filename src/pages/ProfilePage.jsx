@@ -1,33 +1,51 @@
 import React from 'react';
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
+import HomeRight from "../components/home/HomeRight"
 
 const ProfilePage = () => {
-
   const { user } = useSelector((state) => state.profile);
-  console.log("Posts are", user.Posts)
 
   return (
-    <div className="container mx-auto my-8 p-8 bg-white shadow-md rounded-md">
-      <div className="flex items-center">
-        <img
-          src={user.image}
-          alt="Profile"
-          className="w-16 h-16 rounded-full mr-4"
-        />
-        <div>
-          <h1 className="text-2xl font-semibold">{`${user.firstName} ${user.lastName}`}</h1>
-          <p className="text-gray-600">{user.email}</p>
+    <div className='px-4'>
+      <div className='mx-auto flex flex-col items-center'>
+        <div className="flex items-center p-8">
+          <img
+            src={user.image}
+            alt="Profile"
+            className="w-32 h-32 rounded-full mr-4"
+          />
+          <div>
+            <h1 className="text-4xl font-semibold text-richblack-200">
+              {`${user.firstName} ${user.lastName}`}
+            </h1>
+            <p className="text-gray-600">
+              {user.email}
+            </p>
+          </div>
+        </div>
+
+        <h2 className="mt-6 text-xl font-semibold">Posts</h2>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          {user.Posts.map((post) => (
+            <div key={post._id} className=''>
+              <div className='flex'>
+                <div className='p-4 w-full'>
+                  <Link to={`/post/${post._id}`}>
+                    <div className='border border-gray-200 p-4 rounded-xl hover:bg-gray-50 transition'>
+                      <div className='h-64 overflow-hidden'>
+                        <img src={post.thumbnail} alt={post.title} className='w-full h-full object-cover mb-4 rounded-xl' />
+                      </div>
+                      <h2 className='text-xl font-bold mb-2 line-clamp-2'>{post.title}</h2>
+                      <p className='text-md line-clamp-3'>{post.summary}</p>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Additional user details or features can be added here */}
-
-      <h2 className="mt-6 text-xl font-semibold">Posts</h2>
-      <ul className="list-disc pl-6">
-        {user.Posts.map((postId) => (
-          <li key={postId}>{postId}</li>
-        ))}
-      </ul>
     </div>
   );
 };

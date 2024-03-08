@@ -8,6 +8,7 @@ const Post = ({ post }) => {
     const [tagName, setTagName] = useState('');
     const [author, setAuthor] = useState(null);
     const [saved, setSaved] = useState(false)
+    const [readingTime, setReadingTime] = useState(0);
 
     console.log("Printing post details", post);
 
@@ -38,12 +39,21 @@ const Post = ({ post }) => {
         fetchAuthorDetails();
     }, []);
 
+    useEffect(() => {
+        if (post) {
+            const wordsPerMinute = 100; // Average reading speed
+            const numberOfWords = post.content.split(/\s/g).length;
+            const minutes = numberOfWords / wordsPerMinute;
+            setReadingTime(Math.ceil(minutes));
+        }
+    }, [post]);
+
     const savePost = () => {
         setSaved(!saved); // Toggle the value of saved
     };
 
     return (
-        <div className='flex flex-row max-w-full mt-8 border-b-[1px] border-richblack-50 py-4'>
+        <div className='flex flex-row max-w-full mt-8 border-b-[1px] border-richblack-50 py-4 items-center'>
             {/* left section */}
             <div className='flex flex-col w-[80%] gap-2'>
                 {/* info */}
@@ -82,11 +92,14 @@ const Post = ({ post }) => {
                         }
                     </div> */}
                 </div>
+                <div>
+                    Estimated reading time: {readingTime} minute{readingTime !== 1 ? 's' : ''}
+                </div>
             </div>
             {/* image */}
-            <div className=''>
+            <div className='justify-center items-center '>
                 <Link to={`/post/${post._id}`}>
-                    <img className="h-48 w-48 object-cover rounded-xl" src={post.thumbnail} alt={post.title} />
+                    <img className="h-48 w-48 object-cover rounded-xl " src={post.thumbnail} alt={post.title} />
                 </Link>
             </div>
         </div>

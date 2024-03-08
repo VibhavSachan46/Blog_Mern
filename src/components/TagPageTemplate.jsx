@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import TagPagePostTemplate from './TagPagePostTemplate';
+
 const TagPageTemplate = () => {
     const { id } = useParams();
     console.log("tagId", id);
@@ -34,29 +35,29 @@ const TagPageTemplate = () => {
     console.log("Printing all posts", posts)
 
     return (
-        <div className='px-16'>
-            {details && (
-                <div className='p-4 '>
-                    <div className='p-4'>
-                        <h2 className='text-3xl font-mono'>
-                            Tag name: {details.name}
-                        </h2>
-                        <p className='font-serif mt-2 text-lg'>
-                            {details.description}
-                        </p>
-                    </div>
+            <div className='px-16'>
+                {details && (
+                    <div className='p-4 '>
+                        <div className='p-4'>
+                            <h2 className='text-3xl font-mono'>
+                                Tag: {details.name}
+                            </h2>
+                            <p className='font-serif mt-2 text-lg'>
+                                {details.description}
+                            </p>
+                        </div>
 
-                    <div className='grid grid-cols-3 gap-4'>
-                        {/* Displaying all posts related to this tag */}
-                        {
-                            posts.map(post => (
-                                <TagPagePostTemplate key={post.id} post={post} />
-                            ))
-                        }
+                        <div className='grid grid-cols-3 gap-4'>
+                            {/* Displaying all posts related to this tag */}
+                            {
+                                posts.map(post => (
+                                    <TagPagePostTemplate key={post.id} post={post} />
+                                ))
+                            }
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
     );
 };
 

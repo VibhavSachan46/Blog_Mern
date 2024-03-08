@@ -30,10 +30,12 @@ const Post = new mongoose.Schema(
 			required: true,
 			trim: true,
         },
-        // timeStamp:{
-        //     type: Date,
-        //     default:Date.now,
-        // },
+        comments: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Comments',
+            },
+        ],
     }, {timestamps:true}
 )
 

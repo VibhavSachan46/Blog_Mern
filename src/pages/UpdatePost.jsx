@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { TagEndpoints } from '../services/apis';
 import { apiConnector } from '../services/apiconnector';
 import { toast } from "react-hot-toast"
@@ -8,43 +9,49 @@ import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const Write = () => {
+const UpdatePost = () => {
   const { token } = useSelector((state) => state.auth);
+  const { id } = useParams();
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [content, setContent] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
-  const [tags, setTags] = useState([]);
+  const [thumbnailUrl, setThumbnailUrl] = useState('');
+  // const [tags, setTags] = useState([]);
+  const tags = useSelector((state) => state.tags.tags)
   const TAGS_API = TagEndpoints.TAGS_API; // Replace with your actual API endpoint
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  console.log("ID is ", id)
 
-  const fetchTags = async () => {
-    try {
-      setLoading(true)
-      console.log('Fetching tags...');
-      const response = await apiConnector('GET', TAGS_API);
-      console.log('Printing tags', response);
-
-      // Check if the response is successful and has the expected structure
-      if (response.data && response.data.success) {
-        setTags(response.data.data); // Set the tags array
-      } else {
-        console.log('Invalid response structure:', response);
-        throw new Error('Invalid response structure');
-      }
-      setLoading(false)
-    } catch (error) {
-      console.log('Could not fetch the tag list');
-      console.error(error); // Log the full error object for more details
-    }
-  };
   useEffect(() => {
-    fetchTags();
-  }, []);
+    const fetchPost = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/v1/post/getPost/${id}`);
+        const data = await response.json();
+        console.log("ReSPOnse is ", data);
 
-  const handleSave = async () => {
+        if (data.success) {
+          const post = data.data;
+          setTitle(post.title);
+          setSummary(post.summary);
+          setContent(post.content);
+          setSelectedTag(post.Tag._id); // Assuming the tag ID is stored in post.Tag._id
+          setThumbnail(post.thumbnail);
+          console.log("tag name is ", post.Tag.name);
+        } else {
+          console.error('Failed to fetch post:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching post:', error.message);
+      }
+    };
+
+    fetchPost();
+  }, [id]);
+
+  const handleUpdate = async () => {
     try {
       const formData = new FormData();
       formData.append('title', title);
@@ -53,47 +60,47 @@ const Write = () => {
       formData.append('tag', selectedTag);
       formData.append('thumbnail', thumbnail);
 
-      console.log("title is", title)
-      console.log("summary is", summary)
-      console.log("content is", content)
-      console.log("selectedTag is", selectedTag)
-      console.log("thumbnail is", thumbnail)
-
-      console.log("Printing token", token)
-
-      const response = await axios.post('http://localhost:5000/api/v1/post/createPost', formData, {
+      const response = await axios.put(`http://localhost:5000/api/v1/post/updatePost/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data', // Make sure to set the correct content type for FormData
         },
       });
 
+      console.log("response.data.success", response.data)
+
       if (response.data.success) {
-        console.log('Blog post saved successfully:', response.data.message);
-        toast.success("Blog created")
+        console.log('Blog post updated successfully:', response.data.message);
+        toast.success("Blog updated")
         navigate("/")
-        // Optionally redirect the user to the newly created post
       } else {
-        console.error('Failed to save blog post:', response.data.message);
-        toast.error("Failed to create Blog")
+        console.error('Failed to update blog post:', response.data.message);
+        toast.error("Failed to update Blog")
       }
     } catch (error) {
-      console.error('Error saving blog post:', error);
-      toast.error("Failed to create Blog")
+      console.error('Error updating blog post:', error);
+      toast.error("Failed to update Blog")
     }
   };
+
+
+  console.log("ALl tags are", tags)
 
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     setThumbnail(file);
+
+    // Create a temporary URL for the selected file
+    setThumbnailUrl(URL.createObjectURL(file));
   };
 
-  if(!token){
+  if (!token) {
     navigate("/login")
   }
 
   return (
     <div className="max-w-2xl mx-auto py-8">
-      <h2 className="text-3xl font-bold mb-6">Write a Blog Post</h2>
+      <h2 className="text-3xl font-bold mb-6">Update Blog Post</h2>
       <div>
         Title
         <input
@@ -128,7 +135,10 @@ const Write = () => {
         <h2>Select Tag</h2>
         <select
           value={selectedTag}
-          onChange={(e) => setSelectedTag(e.target.value)}
+          onChange={(e) => {
+            setSelectedTag(e.target.value)
+            console.log("Selected tag is ", selectedTag)
+          }}
           className="w-full mb-4 p-2 border border-gray-300 rounded"
         >
           <option value="">Select a tag</option>
@@ -137,23 +147,27 @@ const Write = () => {
           ))}
         </select>
       </div>
-      <div>
-        <h2>Select thumbnail</h2>
+      {/* <div>
+        <h2>Change thumbnail</h2>
         <input
           type="file"
           accept="image/*"
           onChange={handleThumbnailChange}
           className="mb-4"
         />
-      </div>
+        {thumbnailUrl && (
+          <img src={thumbnailUrl} alt="Thumbnail Preview" className="w-40 h-40 object-cover mb-4" />
+        )}
+      </div> */}
       <button
-        onClick={handleSave}
+        onClick={handleUpdate}
         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
       >
-        Save
+        Update
       </button>
     </div>
   );
 };
 
-export default Write;
+export default UpdatePost;
+

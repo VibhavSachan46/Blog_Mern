@@ -8,6 +8,7 @@ import { setUser } from '../../slices/profileSlice'
 const {
     SIGNUP_API,
     LOGIN_API,
+    GET_PROFILE
 } = endpoints
 
 export function login(email, password, navigate) {
@@ -50,6 +51,35 @@ export function login(email, password, navigate) {
         toast.dismiss(toastId)
     }
 }
+
+export function getProfile() {
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...")
+        dispatch(setLoading(true))
+        try {
+            const response = await apiConnector("GET", GET_PROFILE)
+
+            console.log("GET PROFILE API RESPONSE............", response)
+
+            if (!response.data.success) {
+                throw new Error(response.data.message)
+            }
+
+            const userImage = response.data?.user?.image
+                ? response.data.user.image
+                : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`
+            dispatch(setUser({ ...response.data.user, image: userImage }))
+
+            localStorage.setItem("user", JSON.stringify(response.data.user))
+        } catch (error) {
+            console.log("GET PROFILE API ERROR............", error)
+            toast.error("Failed to fetch user profile")
+        }
+        dispatch(setLoading(false))
+        toast.dismiss(toastId)
+    }
+}
+
 
 export function signup(
     firstName,
