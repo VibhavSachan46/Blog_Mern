@@ -5,18 +5,6 @@ import HomeRight from '../components/home/HomeRight'
 
 const Home = () => {
 
-    const [fix, setFix] = useState(false)
-
-    function setFixed() {
-        if (window.scrollY >= 500) {
-            setFix(true)
-        } else {
-            setFix(false)
-        }
-    }
-
-    window.addEventListener("scroll", setFixed)
-
     return (
         <div className='text-black flex flex-row'>
 

@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import UserContextProvider from "./userContext";
 import Header from "./components/Header";
-import Contact from "./pages/Contact";
 import AboutUs from "./pages/AboutUs";
 import Home from "./pages/Home"
 import Write from "./pages/Write";
@@ -16,14 +15,17 @@ import TagPageTemplate from "./components/TagPageTemplate";
 import UpdatePost from "./pages/UpdatePost";
 import SavedPosts from "./pages/SavedPosts";
 import Footer from "./components/Footer";
+import React from "react";
 
 
 function App() {
+
+
   return (
     <div className="flex flex-col w-full">
       <Header />
       <div className="flex">
-        <div className="w-[70%] ">
+        <div className="w-[70%]">
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path={'/'} element={<Home />} />
@@ -45,12 +47,11 @@ function App() {
           </Routes>
         </div>
         {/* vertical Border  */}
-        <div className='border-r-[1px] border-richblack-100 mt-16 mb-16 mr-16'> </div>
-        <div className="w-[30%]">
+        <div className='border-r-[1px] border-richblack-100 mt-8 mb-8 mr-8'> </div>
+        <div className="w-[35%]">
           <HomeRight />
         </div>
       </div>
-      {/* <Footer/> */}
     </div>
   );
 }

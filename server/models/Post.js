@@ -39,4 +39,6 @@ const Post = new mongoose.Schema(
     }, {timestamps:true}
 )
 
+Post.index({ title: 'text', summary: 'text', content: 'text' });
+
 module.exports = mongoose.model("Post", Post)

@@ -15,13 +15,13 @@ const Header = () => {
     const { token } = useSelector((state) => state.auth);
     const { user } = useSelector((state) => state.profile);
     const tags = useSelector((state) => state.tags.tags)
-    console.log("Tags in header  are ", tags.map(tag => tag.name).join(", "));
+    // console.log("Tags in header  are ", tags.map(tag => tag.name).join(", "));
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    console.log("token is", token);
-    console.log("user is", user);
+    // console.log("token is", token);
+    // console.log("user is", user);
 
     const location = useLocation();
 
@@ -35,7 +35,7 @@ const Header = () => {
             <div className='flex items-center justify-center'>
                 <div className='flex gap-4 items-center'>
                     <Link to="/" className='text-2xl font-semibold text-gray-800'>
-                        <h2>Philosophy</h2>
+                    <h2 className='font-Heading tracking-widest font-bold text-4xl'>StoryScape</h2>
                     </Link>
                     <div className='relative hidden sm:flex'>
                         <input

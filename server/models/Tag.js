@@ -17,4 +17,5 @@ const Tag = new mongoose.Schema({
     ]
 })
 
+Tag.index({ name: 'text' });
 module.exports = mongoose.model("Tag", Tag)

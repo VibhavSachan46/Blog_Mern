@@ -7,10 +7,8 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader")
 
 exports.createPost = async (req, res) => {
     try {
-        console.log("Post Process started")
         // Get user ID from request object
         const userId = req.user.id;
-        console.log("userId is ", userId)
 
         //Get all data from req.body
         let {
@@ -19,7 +17,6 @@ exports.createPost = async (req, res) => {
             content,
             tag,
         } = req.body
-        console.log(title, summary, content, tag)
 
         //get thumbnail from req.file
         // const thumbnail = req.files.thumbnail
@@ -44,14 +41,11 @@ exports.createPost = async (req, res) => {
             })
         }
 
-        console.log(TagDetails)
-
         // upload the image to cloudinary
         const thumbnailImage = await uploadImageToCloudinary(
             thumbnail,
             process.env.FOLDER_NAME
         );
-        console.log("Image uploaded");
 
 
         //create new post
@@ -127,7 +121,6 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
     try {
-        console.log("Showing all Posts");
 
         const allPosts = await Post.find({})
             .sort({ createdAt: -1 })
@@ -178,7 +171,6 @@ exports.getRandomPosts = async (req, res) => {
 
 exports.getPost = async (req, res) => {
     try {
-        console.log("Showing specific post");
 
         const postId = req.params.id; // Assuming you have the post ID in the request parameters
         const specificPost = await Post.findById(postId)

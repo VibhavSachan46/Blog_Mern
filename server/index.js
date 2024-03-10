@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const database = require("./config/database");
 const userRoutes = require("./routes/User");
 const PostRoutes = require("./routes/Post")
+const searchRoutes = require("./routes/Search")
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const fileUpload = require("express-fileupload");
@@ -40,6 +41,7 @@ app.use(
 //routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/post", PostRoutes);
+app.use("/api/v1/search", searchRoutes);
 
 app.get("/", (req, res) => {
 	return res.json({

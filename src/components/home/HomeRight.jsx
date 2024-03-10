@@ -7,6 +7,10 @@ import { fetchTagsFailure, fetchTagsRequest, fetchTagsSuccess, } from '../../sli
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { RiseLoader } from "react-spinners"
+import { IoIosTrendingUp } from "react-icons/io";
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 
 const HomeRight = () => {
   // const [tags, setTags] = useState([]);
@@ -21,6 +25,7 @@ const HomeRight = () => {
   // const loading = false
 
   const [randomPosts, setRandomPosts] = useState([])
+  const [postLoading, setPostLoading] = useState(false)
 
 
 
@@ -30,7 +35,7 @@ const HomeRight = () => {
       try {
         const response = await apiConnector("GET", TAGS_API);
         dispatch(fetchTagsSuccess(response.data.data));
-        console.log("response is", response.data.data)
+        // console.log("response is", response.data.data)
       } catch (error) {
         dispatch(fetchTagsFailure(error.message));
       }
@@ -38,17 +43,20 @@ const HomeRight = () => {
 
     const fetchRandomPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/post/getRandomPosts");
-        console.log("responsesssss is", response)
-        console.log("response.data.success", response.data.success)
-        console.log("response.data.data", response.data.posts)
+        setPostLoading(true)
+        const response = await axios.get(`${BASE_URL}/post/getRandomPosts`);
+        // console.log("responsesssss is", response)
+        // console.log("response.data.success", response.data.success)
+        // console.log("response.data.data", response.data.posts)
         if (response.data.success === true) {
           setRandomPosts(response.data.posts);
-        }else{
+        } else {
           toast.error("Could not fetch recommended posts")
         }
+        setPostLoading(false)
       } catch (error) {
         console.log("Could not fetch random posts");
+        setPostLoading(false)
       }
     };
 
@@ -57,15 +65,16 @@ const HomeRight = () => {
     fetchRandomPosts()
   }, [dispatch]);
 
-  console.log("Tags are ", tags.map(tag => tag.name).join(", "));
-  console.log("random posts are", randomPosts);
+  // console.log("Tags are ", tags.map(tag => tag.name).join(", "));
+  // console.log("random posts are", randomPosts);
+  // console.log("random posts length i", randomPosts.length);
 
   return (
-    <div className="">
-      {/* Recommended posts */}
+    <div className=''>
+      {/* Tags */}
       <div className="flex flex-col justify-start items-start gap-6 mt-16">
-        <h2 className="text-2xl">
-          <span className="border-b inline-block">Tags</span>
+        <h2 className="text-3xl font-semibold text-richblack-300">
+          <span className="">Tags</span>
         </h2>
         <div className="flex gap-4 flex-wrap">
           {loading ? (
@@ -83,17 +92,26 @@ const HomeRight = () => {
 
       {/* Trending Posts */}
       <div className="mt-8">
-        <h2 className="text-2xl">
-          <span className="border-b inline-block">Trending Posts</span>
-
-        </h2>
-        <div className="flex flex-col gap-8 mt-8">
-          {/* <TrendingPost post={randomPosts}/> */}
-          {
-            randomPosts.map((post) => (
-              <TrendingPost key={post._id} post={post}/>
-            ))
-          }
+        <div>
+          <h2 className="text-3xl font-semibold flex gap-2 items-center text-richblack-400">
+            <span className="">
+              Recommended Posts
+            </span>
+            <IoIosTrendingUp />
+          </h2>
+          <div className="flex flex-col gap-8 mt-8">
+            {/* <TrendingPost post={randomPosts}/> */}
+            {
+              postLoading ? (
+                <div className='flex justify-center items-center'>
+                  <RiseLoader color="#838894" />
+                </div>
+              ) : (
+                randomPosts.map((post, index) => (
+                  <TrendingPost key={post._id} post={post} index={index} />
+                )))
+            }
+          </div>
         </div>
       </div>
     </div>

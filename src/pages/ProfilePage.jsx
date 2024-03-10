@@ -16,21 +16,21 @@ const ProfilePage = () => {
             className="w-32 h-32 rounded-full mr-4"
           />
           <div>
-            <h1 className="text-4xl font-semibold text-richblack-200">
+            <h1 className="text-4xl font-semibold text-richblack-200 font-Madimi">
               {`${user.firstName} ${user.lastName}`}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-xl">
               {user.email}
             </p>
           </div>
         </div>
 
-        <h2 className="mt-6 text-xl font-semibold">Posts</h2>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        <h2 className="mt-6 text-3xl font-semibold font-Madimi">Posts</h2>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-8'>
           {user.Posts.map((post) => (
             <div key={post._id} className=''>
               <div className='flex'>
-                <div className='p-4 w-full'>
+                <div className='p-2 w-full'>
                   <Link to={`/post/${post._id}`}>
                     <div className='border border-gray-200 p-4 rounded-xl hover:bg-gray-50 transition'>
                       <div className='h-64 overflow-hidden'>

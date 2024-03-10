@@ -29,7 +29,6 @@ exports.signup = async (req, res) => {
             })
         }
 
-        console.log("Validatoon passed")
         //compare password
         if (password !== confirmPassword) {
             return res.status(401).json({
@@ -143,9 +142,7 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
     try {
         // Check if the request contains a valid JWT token
-        console.log("Get profile started")
         const userId = req.user.id;
-        console.log("userid is",userId)
 
         // Use the decoded data to find the user in the database
         const user = await User.findById(userId)
@@ -161,8 +158,6 @@ exports.getProfile = async (req, res) => {
 
         // Remove sensitive information from the user object
         user.password = undefined;
-
-        console.log("Get profile complerted")
 
         return res.status(200).json({
             success: true,
@@ -193,7 +188,6 @@ exports.logout = async (req, res) => {
 exports.savePost = async (req, res) => {
     const postId = req.params.id;
     const userId = req.user.id;
-    console.log("POSt id is", postId)
 
     try {
         const user = await User.findById(userId);
@@ -214,7 +208,6 @@ exports.savePost = async (req, res) => {
 exports.unsavePost = async (req, res) => {
     const postId = req.params.id;
     const userId = req.user.id;
-    console.log("unsave POSt id is", postId)
 
     try {
         const user = await User.findById(userId);

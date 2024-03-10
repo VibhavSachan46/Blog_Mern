@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast"
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const UpdatePost = () => {
   const { token } = useSelector((state) => state.auth);
@@ -28,9 +29,9 @@ const UpdatePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/post/getPost/${id}`);
+        const response = await fetch(`${BASE_URL}/post/getPost/${id}`);
         const data = await response.json();
-        console.log("ReSPOnse is ", data);
+        // console.log("ReSPOnse is ", data);
 
         if (data.success) {
           const post = data.data;
@@ -39,12 +40,14 @@ const UpdatePost = () => {
           setContent(post.content);
           setSelectedTag(post.Tag._id); // Assuming the tag ID is stored in post.Tag._id
           setThumbnail(post.thumbnail);
-          console.log("tag name is ", post.Tag.name);
+          // console.log("tag name is ", post.Tag.name);
         } else {
           console.error('Failed to fetch post:', data.message);
+          toast.error("Failed to fetch post")
         }
       } catch (error) {
         console.error('Error fetching post:', error.message);
+        toast.error("Failed to fetch post")
       }
     };
 
@@ -53,6 +56,7 @@ const UpdatePost = () => {
 
   const handleUpdate = async () => {
     try {
+      const toastId = toast.loading("Updating blog...")
       const formData = new FormData();
       formData.append('title', title);
       formData.append('summary', summary);
@@ -60,7 +64,7 @@ const UpdatePost = () => {
       formData.append('tag', selectedTag);
       formData.append('thumbnail', thumbnail);
 
-      const response = await axios.put(`http://localhost:5000/api/v1/post/updatePost/${id}`, formData, {
+      const response = await axios.put(`${BASE_URL}/post/updatePost/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data', // Make sure to set the correct content type for FormData
@@ -70,13 +74,14 @@ const UpdatePost = () => {
       console.log("response.data.success", response.data)
 
       if (response.data.success) {
-        console.log('Blog post updated successfully:', response.data.message);
+        // console.log('Blog post updated successfully:', response.data.message);
         toast.success("Blog updated")
         navigate("/")
       } else {
         console.error('Failed to update blog post:', response.data.message);
         toast.error("Failed to update Blog")
       }
+      toast.dismiss(toastId)
     } catch (error) {
       console.error('Error updating blog post:', error);
       toast.error("Failed to update Blog")

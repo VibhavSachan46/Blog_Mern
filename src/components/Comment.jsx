@@ -2,11 +2,23 @@ import React from 'react';
 import moment from 'moment';
 import { AiOutlineDelete } from "react-icons/ai";
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Comment = ({ comment }) => {
     const { user } = useSelector((state) => state.profile);
-    console.log("Author email is",comment.Author.email)
-    console.log("Current user email is",user?.email)
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`${BASE_URL}/post/${comment.PostId}/comment/${comment._id}`);
+            toast.success("Comment deleted")
+            window.location.reload(); // Refresh the page
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            toast.success("Failed to delete comment")
+        }
+    };
 
     return (
         <div className="border border-richblack-100 p-4 rounded-xl my-2 lg:mx-16 sm:mx-2">
@@ -19,8 +31,8 @@ const Comment = ({ comment }) => {
                 </div>
                 {
                     user?.email === comment.Author.email ? (<div>
-                        <AiOutlineDelete className='text-xl cursor-pointer' />
-                    </div>):(<div></div>)
+                        <AiOutlineDelete className='text-xl cursor-pointer' onClick={handleDelete} />
+                    </div>) : (<div></div>)
                 }
             </div>
             <div>

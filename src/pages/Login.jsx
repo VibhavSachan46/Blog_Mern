@@ -7,7 +7,6 @@ function Login() {
       title="Welcome Back"
       description1="The first step in blogging is not writing them but reading them."
       description2="~Jeff Jarvis"
-      image={loginImg}
       formType="login"
     />
   )

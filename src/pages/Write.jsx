@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast"
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Write = () => {
   const { token } = useSelector((state) => state.auth);
@@ -32,6 +33,7 @@ const Write = () => {
         setTags(response.data.data); // Set the tags array
       } else {
         console.log('Invalid response structure:', response);
+        toast.error("Failed to fetch Tags")
         throw new Error('Invalid response structure');
       }
       setLoading(false)
@@ -46,6 +48,7 @@ const Write = () => {
 
   const handleSave = async () => {
     try {
+      const toastId = toast.loading("Creating blog...")
       const formData = new FormData();
       formData.append('title', title);
       formData.append('summary', summary);
@@ -60,8 +63,8 @@ const Write = () => {
       console.log("thumbnail is", thumbnail)
 
       console.log("Printing token", token)
-
-      const response = await axios.post('http://localhost:5000/api/v1/post/createPost', formData, {
+      // const response = await apiConnector('GET', `/api/tags/${post.Tag}`);
+      const response = await axios.post(`${BASE_URL}/post/createPost`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -71,11 +74,11 @@ const Write = () => {
         console.log('Blog post saved successfully:', response.data.message);
         toast.success("Blog created")
         navigate("/")
-        // Optionally redirect the user to the newly created post
       } else {
         console.error('Failed to save blog post:', response.data.message);
         toast.error("Failed to create Blog")
       }
+      toast.dismiss(toastId)
     } catch (error) {
       console.error('Error saving blog post:', error);
       toast.error("Failed to create Blog")

@@ -6,7 +6,7 @@ const User = require("../models/User")
 exports.auth = async (req, res, next) => {
     try{
         //extract token
-        console.log("Middleware started")
+        // console.log("Middleware started")
         const token = req.cookies.token 
                         || req.body.token 
                         || req.header("Authorization").replace("Bearer ", "");
@@ -20,11 +20,11 @@ exports.auth = async (req, res, next) => {
                 message:'Token is missing',
             });
         }
-        console.log("middle token is",token)
+        // console.log("middle token is",token)
         //verify the token
         try{
             const decode =  jwt.verify(token, process.env.JWT_SECRET);
-            console.log("decode is ",decode);
+            // console.log("decode is ",decode);
             req.user = decode;
         }
         catch(err) {
@@ -34,7 +34,7 @@ exports.auth = async (req, res, next) => {
                 message:'token is invalid', token,
             });
         }
-        console.log("Middelware completed")
+        // console.log("Middelware completed")
         next();
     }
     catch(error) {  

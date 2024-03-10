@@ -28,7 +28,7 @@ router.get("/getAllPosts", getAllPosts)
 router.get("/getRandomPosts", getRandomPosts)
 router.get("/getPost/:id", getPost);
 router.put("/updatePost/:id", updatePost)
-router.delete("/:id", deletePost)
+router.delete("/delete/:id",auth, deletePost)
 
 //Comments
 router.post("/:postId/addComment", addComment)

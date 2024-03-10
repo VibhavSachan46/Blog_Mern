@@ -4,7 +4,6 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import { setSignupData } from "../slices/authSlice"
 
 import { signup } from "../services/operations/authAPI"
 
@@ -89,7 +88,7 @@ function SignupForm() {
                             style={{
                                 boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                             }}
-                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                            className="w-full rounded-[0.5rem] bg-richblack-5 p-[12px] text-richblack-800"
                         />
                     </label>
                     <label>
@@ -106,7 +105,7 @@ function SignupForm() {
                             style={{
                                 boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                             }}
-                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                            className="w-full rounded-[0.5rem] bg-richblack-5 p-[12px] text-richblack-800"
                         />
                     </label>
                 </div>
@@ -124,7 +123,7 @@ function SignupForm() {
                         style={{
                             boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                         }}
-                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                        className="w-full rounded-[0.5rem] bg-richblack-5 p-[12px] text-richblack-800"
                     />
                 </label>
                 <div className="flex gap-x-4">
@@ -142,7 +141,7 @@ function SignupForm() {
                             style={{
                                 boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                             }}
-                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
+                            className="w-full rounded-[0.5rem] bg-richblack-5 p-[12px] pr-10 text-richblack-800"
                         />
                         <span
                             onClick={() => setShowPassword((prev) => !prev)}
@@ -169,7 +168,7 @@ function SignupForm() {
                             style={{
                                 boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                             }}
-                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
+                            className="w-full rounded-[0.5rem] bg-richblack-5 p-[12px] pr-10 text-richblack-800"
                         />
                         <span
                             onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -185,7 +184,7 @@ function SignupForm() {
                 </div>
                 <button
                     type="submit"
-                    className="mt-6 rounded-[8px] bg-yellow-50 py-[8px] px-[12px] font-medium text-richblack-900"
+                    className="mt-6 rounded-[8px] bg-caribbeangreen-600 py-[8px] px-[12px] font-medium text-richblack-5"
                 >
                     Create Account
                 </button>

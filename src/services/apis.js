@@ -14,5 +14,6 @@ export const TagEndpoints = {
 
 // Post Endpoints
 export const PostEndPoints ={
-    GETPost_API: BASE_URL + "/post/getAllPosts"
+    GETPost_API: BASE_URL + "/post/getAllPosts",
+    CREATE_POST: BASE_URL + "/post/createPost"
 }

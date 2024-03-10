@@ -26,7 +26,6 @@ exports.createTag = async (req, res) => {
             name: name,
             description: description
         })
-        console.log(TagDetails)
 
         // return response
         return res.status(200).json({
@@ -43,7 +42,6 @@ exports.createTag = async (req, res) => {
 
 exports.getAllTags = async (req, res) => {
     try {
-        console.log("Showing all tags")
 
         const allTags = await Tag.find({})
 
@@ -62,7 +60,6 @@ exports.getAllTags = async (req, res) => {
 
 exports.getTag = async (req, res) => {
     try {
-        console.log("showing specific tag details")
 
         const tagId = req.params.id;
 

@@ -1,23 +1,25 @@
 import axios, { all } from 'axios'
 import React, { useEffect, useState } from 'react'
 import Comment from './Comment'
+import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Comments = ({ postId }) => {
     const [allComment, setAllComment] = useState([])
     const [newComment, setNewComment] = useState('');
     const { user } = useSelector((state) => state.profile);
     const { token } = useSelector((state) => state.auth);
-    console.log("id is", postId)
-    console.log("user id is", user?._id)
-    console.log("token is",token)
+    // console.log("id is", postId)
+    // console.log("user id is", user?._id)
+    // console.log("token is",token)
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/v1/post/${postId}/getComments`);
-                console.log("response is ", response.data)
-                console.log("author is ", response.data.comments)
+                const response = await axios.get(`${BASE_URL}/post/${postId}/getComments`);
+                // console.log("response is ", response.data)
+                // console.log("author is ", response.data.comments)
                 setAllComment(response.data.comments)
 
             } catch (error) {
@@ -27,13 +29,14 @@ const Comments = ({ postId }) => {
 
         fetchComments()
     }, [])
-    console.log("All comments are", allComment)
+    // console.log("All comments are", allComment)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const toastId = toast.loading("Creating comment...")
             const response = await axios.post(
-                `http://localhost:5000/api/v1/post/${postId}/addComment`,
+                `${BASE_URL}/post/${postId}/addComment`,
                 {
                     comment: newComment,
                     authorId: user?._id
@@ -42,8 +45,11 @@ const Comments = ({ postId }) => {
             setAllComment([...allComment, response.data.comment]);
             setNewComment('');
             window.location.reload(); // Refresh the page
+            toast.success("Comment added")
+            toast.dismiss(toastId)
         } catch (error) {
             console.log("Could not add comment");
+            toast.success("Failed to create Comment")
         }
     };
 

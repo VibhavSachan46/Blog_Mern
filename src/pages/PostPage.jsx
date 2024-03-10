@@ -1,59 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../slices/profileSlice';
 import { addPost, removePost } from '../slices/savedSlice'; // Import addPost and removePost actions
 import Comments from '../components/Comments';
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { RiseLoader } from "react-spinners"
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const PostPage = () => {
     const { id } = useParams();
-    // const { user } = useSelector((state) => state.profile);
     const [post, setPost] = useState(null);
     const [readingTime, setReadingTime] = useState(0);
     const [isSaved, setIsSaved] = useState(false);
     const { token } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
-    const [user,setUser] = useState(null)
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/api/v1/post/getPost/${id}`);
-                const data = response.data;
 
-                if (data.success) {
-                    setPost(data.data);
-                    setIsSaved(user?.savedPosts?.some(post => post._id === data.data._id));
-                } else {
-                    console.error('Failed to fetch post:', data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching post:', error.message);
-            }
-        };
         const getUserDetails = async () => {
             try {
-                console.log("token is ", token)
+                // console.log("token is ", token)
+                if (!token) {
+                    return
+                }
                 const config = {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                const response = await axios.get("http://localhost:5000/api/v1/auth/getProfile", {
+                const response = await axios.get(`${BASE_URL}/auth/getProfile`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
                 if (response) {
-                    console.log("profile fetched", response.data.user)
+                    // console.log("profile fetched", response.data.user)
                     setUser(response.data.user)
                 }
                 else {
                     console.log("cannot fetch profile", response)
-
+                    toast.error("cannot fetch profile")
                 }
 
             } catch (error) {
@@ -64,9 +59,29 @@ const PostPage = () => {
 
         getUserDetails()
 
-        fetchPost();
     }, [id, user]);
 
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                setLoading(true)
+                const response = await axios.get(`${BASE_URL}/post/getPost/${id}`);
+                const data = response.data;
+
+                if (data.success) {
+                    setPost(data.data);
+                    setIsSaved(user?.savedPosts?.some(post => post._id === data.data._id));
+                } else {
+                    console.error('Failed to fetch post:', data.message);
+                    toast.error("cannot fetch post")
+                }
+                setLoading(false)
+            } catch (error) {
+                console.error('Error fetching post:', error.message);
+            }
+        };
+        fetchPost();
+    }, [])
     useEffect(() => {
         if (post) {
             const wordsPerMinute = 100; // Average reading speed
@@ -78,7 +93,7 @@ const PostPage = () => {
 
     const handleSavePost = async () => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/v1/auth/savePost/${post._id}`, {}, {
+            const response = await axios.post(`${BASE_URL}/auth/savePost/${post._id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -99,7 +114,7 @@ const PostPage = () => {
 
     const handleUnsavePost = async () => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/v1/auth/unsavePost/${post._id}`, {}, {
+            const response = await axios.post(`${BASE_URL}/auth/unsavePost/${post._id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -118,53 +133,105 @@ const PostPage = () => {
         }
     };
 
+    const handleDelete = async () => {
+        console.log("Token is ", token);
+        try {
+            const toastId = toast.loading("Deleting blog...")
+            const response = await axios.delete(`${BASE_URL}/post/delete/${post._id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log(response);
+            if (response.data.success == true) {
+                toast.success("Blog deleted")
+                navigate("/")
+                window.location.reload();
+            } else {
+                toast.error("Error in deleting Blog")
+            }
+            toast.dismiss(toastId)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
 
     return (
-        <div className='relative mx-auto flex flex-col w-11/12 max-w-maxContent items-center gap-y-5 mt-8'>
-            {post && (
-                <>
-                    <div className='font-bold text-3xl'>
-                        <h2>{post.title}</h2>
+        <div className='mb-8'>
+            {
+                loading ? (
+                    <div className='flex justify-center items-center h-screen'>
+                        <RiseLoader color="#999DAA" />
                     </div>
+                ) : (
+                    <div className='relative mx-auto flex flex-col w-11/12 max-w-maxContent items-center gap-y-5 mt-8'>
+                        {post && (
+                            <>
+                                <div className='font-bold text-3xl flex mt-4 mb-4 items-center justify-between font-Madimi tracking-widest'>
+                                    <h2 className='justify-center'>{post.title}</h2>
 
-                    <div className='flex gap-2 justify-start '>
-                        <img src={post.Author.image} className='h-[32px] w-[32px] rounded-full' alt="Author" style={{ zIndex: -50 }} />
-                        <Link to="/Profile">
-                            <h3 className='text-black'>{`${post.Author.firstName} ${post.Author.lastName}`}</h3>
-                        </Link>
-                        <div>
-                            {
-                                ((user?.email === post?.Author.email)) ? (
-                                    <Link to={`/edit-post/${post._id}`}>
-                                        Edit post
-                                    </Link>
-                                ) : (<div></div>)
-                            }
-                            <br />
-                            {user && (
-                                <>
-                                    {isSaved ? (
-                                        <button onClick={handleUnsavePost}>Unsave</button>
-                                    ) : (
-                                        <button onClick={handleSavePost}>Save</button>
-                                    )}
-                                </>
-                            )}
-                        </div>
+                                </div>
+
+
+
+                                <div className='gap-x-2 justify-between w-9/12 flex items-center'>
+
+                                    <div className='flex items-center gap-2'>
+                                        <img src={post.Author.image} className='h-[48px] w-[48px] rounded-full' alt="Author" style={{ zIndex: -50 }} />
+                                        <div>
+                                            <p className='text-black font-bold'>{`${post.Author.firstName} ${post.Author.lastName}`}</p>
+                                            <div className='text-richblack-400 font-Madimi'>
+                                                {new Date(post.createdAt).toLocaleDateString()}
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='flex gap-4 items-center mt-4'>
+                                        {
+                                            ((user?.email === post?.Author.email)) ? (
+                                                <div>
+                                                    <Link to={`/edit-post/${post._id}`}>
+                                                        <FaEdit className='text-richblack-400 text-xl' />
+                                                    </Link>
+
+
+                                                </div>
+                                            ) : (<div></div>)
+                                        }
+                                        {user && (
+                                            <>
+                                                {isSaved ? (
+                                                    <button onClick={handleUnsavePost}><FaBookmark className='text-md text-richblack-400' />
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={handleSavePost}><FaRegBookmark className='text-md text-richblack-400' /></button>
+                                                )}
+                                            </>
+                                        )}
+                                        <button onClick={handleDelete}>
+                                            <MdDelete className='text-xl text-richblack-400' />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className='text-xl text-richblack-400'>
+                                    Estimated reading time: {readingTime} minute{readingTime !== 1 ? 's' : ''}
+                                </div>
+
+                                <div className='h-96' style={{ zIndex: -50 }}>
+                                    <img src={post.thumbnail} alt="Post Thumbnail" className="w-full h-full rounded-xl" />
+                                </div>
+
+                                <div dangerouslySetInnerHTML={{ __html: post.content }} className='p-6 ml-6 w-11/12 overflow-hidden' />
+                                <Comments postId={id} />
+                            </>
+                        )}
                     </div>
-
-                    <div>
-                        Estimated reading time: {readingTime} minute{readingTime !== 1 ? 's' : ''}
-                    </div>
-
-                    <div className='h-96' style={{ zIndex: -50 }}>
-                        <img src={post.thumbnail} alt="Post Thumbnail" className="w-full h-full rounded-xl" />
-                    </div>
-
-                    <div dangerouslySetInnerHTML={{ __html: post.content }} className='p-6 ml-6 w-11/12 overflow-hidden' />
-                    <Comments postId={id}/>
-                </>
-            )}
+                )
+            }
         </div>
     );
 }

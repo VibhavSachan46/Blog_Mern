@@ -6,11 +6,8 @@ exports.addComment = async (req, res) => {
     try {
 
         //get Postid , comment statement and author id
-        console.log("Creation of comment started")
         const { postId } = req.params
         const { authorId, comment } = req.body
-        console.log("postid is", postId)
-        console.log("authorId is", authorId)
 
         const post = await Post.findById(postId)
 
@@ -18,7 +15,6 @@ exports.addComment = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        console.log("Post existed")
 
         //create a new comment
         const newComment = new Comment({
@@ -26,7 +22,6 @@ exports.addComment = async (req, res) => {
             PostId: postId,
             Author: authorId,
         });
-        console.log("comment created")
 
         // save the comment to databse
         await newComment.save();
@@ -78,7 +73,6 @@ exports.getComments = async (req, res) => {
 
 exports.deleteComment = async (req, res) => {
     const { commentId, postId } = req.params;
-    console.log("deletion process started")
 
     try {
         // Find the comment and delete it

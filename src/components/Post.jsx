@@ -10,7 +10,7 @@ const Post = ({ post }) => {
     const [saved, setSaved] = useState(false)
     const [readingTime, setReadingTime] = useState(0);
 
-    console.log("Printing post details", post);
+    // console.log("Printing post details", post);
 
     const fetchTagName = async () => {
         try {
@@ -48,32 +48,30 @@ const Post = ({ post }) => {
         }
     }, [post]);
 
-    const savePost = () => {
-        setSaved(!saved); // Toggle the value of saved
-    };
-
     return (
-        <div className='flex flex-row max-w-full mt-8 border-b-[1px] border-richblack-50 py-4 items-center'>
+        <div className='flex flex-row max-w-full mt-8 border-b-[1px] border-richblack-50 py-4 items-center gap-8'>
             {/* left section */}
             <div className='flex flex-col w-[80%] gap-2'>
                 {/* info */}
                 {author && (
-                    <Link to={`/Profile/${author._id}`}>
-                        <div className='flex gap-3 items-center'>
-                            <img src={author.image} className='h-[32px] w-[32px] rounded-full' alt="Author" />
-                            <h3 className=''>{author.firstName} {author.lastName}</h3>
-                        </div>
-                    </Link>
+                    <div className='flex gap-3 items-center'>
+                        <img src={author.image} className='h-[32px] w-[px] rounded-full' alt="Author" />
+                        <h3 className=''>{author.firstName} {author.lastName}</h3>
+                    </div>
                 )}
 
                 {/* heading */}
                 <Link to={`/post/${post._id}`}>
-                    <h3 className='font-bold'>{post.title}</h3>
+                    <div className='font-bold items-center overflow-hidden line-clamp-2 '>
+                        {post.title}
+                    </div>
                 </Link>
 
                 {/* summary */}
                 <div className=''>
-                    <p>{post.summary}</p>
+                    <div className='items-center overflow-hidden line-clamp-2'>
+                        <p>{post.summary}</p>
+                    </div>
                 </div>
 
                 <div className='flex gap-8 items-center'>
@@ -85,12 +83,7 @@ const Post = ({ post }) => {
                     <div className='text-richblack-400'>
                         {new Date(post.createdAt).toLocaleDateString()}
                     </div>
-                    {/* Saved Post */}
-                    {/* <div className='mr-4 cursor-pointer' onClick={savePost}>
-                        {
-                            saved ? (<FaBookmark />):(<FaRegBookmark />)
-                        }
-                    </div> */}
+
                 </div>
                 <div>
                     Estimated reading time: {readingTime} minute{readingTime !== 1 ? 's' : ''}
@@ -99,7 +92,7 @@ const Post = ({ post }) => {
             {/* image */}
             <div className='justify-center items-center '>
                 <Link to={`/post/${post._id}`}>
-                    <img className="h-48 w-48 object-cover rounded-xl " src={post.thumbnail} alt={post.title} />
+                    <img className="h-48 w-64 object-cover rounded-xl " src={post.thumbnail} alt={post.title} />
                 </Link>
             </div>
         </div>

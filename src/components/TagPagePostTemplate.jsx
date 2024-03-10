@@ -5,7 +5,7 @@ import "./TagPagePostTemplate.css"
 const TagPagePostTemplate = ({ post }) => {
     return (
         <div className='flex'>
-            <div className='mt-4 p-4'>
+            <div className=''>
                 <div className='cursor-pointer'>
                     <Link to={`/post/${post._id}`}>
                         <div className='border border-gray-200 p-4 rounded-xl'>
