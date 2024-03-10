@@ -192,11 +192,13 @@ const PostPage = () => {
                                     <div className='flex gap-4 items-center mt-4'>
                                         {
                                             ((user?.email === post?.Author.email)) ? (
-                                                <div>
+                                                <div className='flex gap-4'>
                                                     <Link to={`/edit-post/${post._id}`}>
                                                         <FaEdit className='text-richblack-400 text-xl' />
                                                     </Link>
-
+                                                    <button onClick={handleDelete}>
+                                                        <MdDelete className='text-xl text-richblack-400' />
+                                                    </button>
 
                                                 </div>
                                             ) : (<div></div>)
@@ -209,11 +211,10 @@ const PostPage = () => {
                                                 ) : (
                                                     <button onClick={handleSavePost}><FaRegBookmark className='text-md text-richblack-400' /></button>
                                                 )}
+
                                             </>
                                         )}
-                                        <button onClick={handleDelete}>
-                                            <MdDelete className='text-xl text-richblack-400' />
-                                        </button>
+
                                     </div>
                                 </div>
 
