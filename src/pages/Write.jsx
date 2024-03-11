@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { TagEndpoints } from '../services/apis';
 import { apiConnector } from '../services/apiconnector';
@@ -7,10 +7,12 @@ import { toast } from "react-hot-toast"
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { getProfile } from '../services/operations/authAPI';
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const Write = () => {
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch()
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [content, setContent] = useState('');
@@ -73,6 +75,8 @@ const Write = () => {
       if (response.data.success) {
         console.log('Blog post saved successfully:', response.data.message);
         toast.success("Blog created")
+        // dispatch(getProfile());
+        dispatch(getProfile(token));
         navigate("/")
       } else {
         console.error('Failed to save blog post:', response.data.message);

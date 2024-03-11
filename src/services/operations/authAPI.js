@@ -3,6 +3,10 @@ import { toast } from "react-hot-toast"
 import { setLoading, setToken } from '../../slices/authSlice'
 import { apiConnector } from "../apiconnector"
 import { setUser } from '../../slices/profileSlice'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
+
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 
 const {
@@ -52,12 +56,16 @@ export function login(email, password, navigate) {
     }
 }
 
-export function getProfile() {
+export function getProfile(token) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("GET", GET_PROFILE)
+            const response = await axios.get(`${BASE_URL}/auth/getProfile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
             console.log("GET PROFILE API RESPONSE............", response)
 
@@ -79,6 +87,7 @@ export function getProfile() {
         toast.dismiss(toastId)
     }
 }
+
 
 
 export function signup(
