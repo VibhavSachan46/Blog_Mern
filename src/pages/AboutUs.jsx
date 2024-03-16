@@ -10,7 +10,7 @@ const AboutUs = () => {
     return (
         <div className="container mx-auto p-8 font-Madimi">
             <div className="text-center">
-                <h1 className="text-3xl font-semibold mb-4">About Me</h1>
+                <h1 className="text-3xl font-semibold mb-4">About Me.</h1>
             </div>
             <div className="text-lg leading-relaxed p-4">
                 <p>
